@@ -1,0 +1,42 @@
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.container{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+.search-wrapper{
+  display: flex;
+  align-self: center;
+  margin-top: 20px;
+}
+
+.info-wrapper{
+  display: flex;
+  flex-wrap: wrap;
+  padding: 5px;
+}
+
+.film-info{
+  /* margin: 10px; */
+  width: 25%;
+  height: 100px;
+}
+
+#magnifier{
+  padding: 5px;
+}
+
+.wrapper .fa-search{
+  font-size: 25px;
+}
+
+#search-input{
+  padding: 5px;
+}

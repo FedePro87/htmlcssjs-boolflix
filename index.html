@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title>Boolflix</title>
+  <link rel="icon" href="https://i2.wp.com/www.lanemina.it/wp-content/uploads/2017/01/netflix-7.png?fit=300%2C300&ssl=1" type="image/png" />
+  <link rel="stylesheet" href="style.css">
+  <!-- Fontawesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <!-- Jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- Handlebars -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.0/handlebars.min.js" charset="utf-8"></script>
+  <!-- Moment -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
+  <script type="text/javascript" src="script.js"></script>
+  <script id="film-info-template" type="text/x-handlebars-template">
+    <div class="film-info">
+      <p>Titolo: "<span class="title">{{title}}</span>"</p>
+      <p>Titolo originale: "<span class="original-title">{{originalTitle}}</span>"</p>
+      <p>Lingua: <span class="language">{{language}}</span></p>
+      <p>Valutazione media:
+        <span class="rating">
+          {{#each stars}}
+          <i class="fas fa-star">{{this}}</i>
+          {{/each}}
+          {{#each noStars}}
+          <i class="far fa-star">{{this}}</i>
+          {{/each}}
+        </span>
+      </p>
+    </div>
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="search-wrapper">
+      <input id="search-input" type="text" name="" value="" placeholder="Cerca film...">
+      <button id="magnifier"type="button" name="button"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="info-wrapper"></div>
+  </div>
+</body>
+</html>
