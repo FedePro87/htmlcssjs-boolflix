@@ -17,27 +17,6 @@ function searchQuery(myQuery,url) {
   });
 }
 
-// function searchSeries(myQuery) {
-//   $.ajax({
-//     url:"https://api.themoviedb.org/3/search/tv?api_key=e99307154c6dfb0b4750f6603256716d",
-//     method:"GET",
-//     data:{query:myQuery,language:"it-IT"},
-//     success:function(data,state){
-//       if (data.results.length>0) {
-//         var results=data.results;
-//         populateUI(results);
-//       } else {
-//         alert("La ricerca non ha fornito alcun risultato!");
-//       }
-//     },
-//     error:function(request,state,error){
-//       console.log(request);
-//       console.log(state);
-//       console.log(error);
-//     }
-//   });
-// }
-
 function populateUI(results) {
   var infoWrapper=$(".info-wrapper");
   var filmInfoTemplate=$("#film-info-template").html();
@@ -65,7 +44,8 @@ function populateUI(results) {
         flag:getLanguageFlag(element.original_language),
         stars:arrStars,
         noStars:arrNoStars,
-        posterPathUrl:elementPathUrl
+        posterPathUrl:elementPathUrl,
+        itemOverview:element.overview
       }
     } else {
       inData={
@@ -75,7 +55,8 @@ function populateUI(results) {
         flag:getLanguageFlag(element.original_language),
         stars:arrStars,
         noStars:arrNoStars,
-        posterPathUrl:elementPathUrl
+        posterPathUrl:elementPathUrl,
+        itemOverview:element.overview
       }
     }
 
