@@ -38,6 +38,7 @@ function populateUI(results) {
 
     if (element.title==null) {
       inData={
+        itemId:"tv/" + element.id,
         type:"Serie TV",
         title:element.name,
         originalTitle:element.original_name,
@@ -49,6 +50,7 @@ function populateUI(results) {
       }
     } else {
       inData={
+        itemId:"movie/" + element.id,
         type:"Film",
         title:element.title,
         originalTitle:element.original_title,
@@ -141,6 +143,13 @@ function init(){
       alert("Immettere un parametro di ricerca!");
     }
   });
+
+  var filmInfo=".info-wrapper > .film-info";
+  $(document).on("click", filmInfo, function( e ) {
+    var me=$(this);
+    var itemId=me.data("id");
+    window.open("https://www.themoviedb.org/" + itemId + "?language=it-IT",'_blank');
+  } );
 }
 
 $(document).ready(init);
