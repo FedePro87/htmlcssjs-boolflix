@@ -45,6 +45,12 @@ function populateUI(results) {
 
   for (var i = 0; i < results.length; i++) {
     var element=results[i];
+    var elementPathUrl="https://image.tmdb.org/t/p/w185/" + element.poster_path;
+
+    if (element.poster_path==null) {
+      elementPathUrl="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPP5IbPgoTmUHAxcFAX9s9bBIJJ026gTMh5qXtTK5xeg7-5tnh"
+    }
+
     var stars=getStars(element.vote_average);
     var noStars=5-stars;
     var arrStars=getArrStars(stars);
@@ -58,7 +64,8 @@ function populateUI(results) {
         originalTitle:element.original_name,
         flag:getLanguageFlag(element.original_language),
         stars:arrStars,
-        noStars:arrNoStars
+        noStars:arrNoStars,
+        posterPathUrl:elementPathUrl
       }
     } else {
       inData={
@@ -67,7 +74,8 @@ function populateUI(results) {
         originalTitle:element.original_title,
         flag:getLanguageFlag(element.original_language),
         stars:arrStars,
-        noStars:arrNoStars
+        noStars:arrNoStars,
+        posterPathUrl:elementPathUrl
       }
     }
 

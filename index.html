@@ -16,10 +16,11 @@
   <script type="text/javascript" src="script.js"></script>
   <script id="film-info-template" type="text/x-handlebars-template">
     <div class="film-info">
-      <p>Categoria: "<span class="title">{{type}}</span>"</p>
+      <img id="posterImg" src={{posterPathUrl}} alt="">
       <p>Titolo: "<span class="title">{{title}}</span>"</p>
       <p>Titolo originale: "<span class="original-title">{{originalTitle}}</span>"</p>
       <p>Lingua: <img src={{flag}} alt=""></p>
+      <p>Categoria: "<span class="title">{{type}}</span>"</p>
       <p>Valutazione media:
         <span class="rating">
           {{#each stars}}

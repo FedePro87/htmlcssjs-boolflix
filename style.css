@@ -28,6 +28,7 @@
   min-height: 100px;
   margin: 5px 0;
   padding: 0 4px;
+  text-align: center;
 }
 
 .film-info img{
@@ -54,4 +55,8 @@
 
 #search-input{
   padding: 5px;
+}
+
+#posterImg{
+  width:185px;
 }
