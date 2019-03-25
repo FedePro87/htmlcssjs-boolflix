@@ -1,14 +1,12 @@
-function searchFilm(myQuery) {
+function searchQuery(myQuery,url) {
   $.ajax({
-    url:"https://api.themoviedb.org/3/search/movie?api_key=e99307154c6dfb0b4750f6603256716d",
+    url:url,
     method:"GET",
     data:{query:myQuery,language:"it-IT"},
     success:function(data,state){
       if (data.results.length>0) {
         var results=data.results;
         populateUI(results);
-      } else {
-        alert("La ricerca non ha fornito alcun risultato!");
       }
     },
     error:function(request,state,error){
@@ -19,24 +17,58 @@ function searchFilm(myQuery) {
   });
 }
 
+// function searchSeries(myQuery) {
+//   $.ajax({
+//     url:"https://api.themoviedb.org/3/search/tv?api_key=e99307154c6dfb0b4750f6603256716d",
+//     method:"GET",
+//     data:{query:myQuery,language:"it-IT"},
+//     success:function(data,state){
+//       if (data.results.length>0) {
+//         var results=data.results;
+//         populateUI(results);
+//       } else {
+//         alert("La ricerca non ha fornito alcun risultato!");
+//       }
+//     },
+//     error:function(request,state,error){
+//       console.log(request);
+//       console.log(state);
+//       console.log(error);
+//     }
+//   });
+// }
+
 function populateUI(results) {
   var infoWrapper=$(".info-wrapper");
   var filmInfoTemplate=$("#film-info-template").html();
   var compiled=Handlebars.compile(filmInfoTemplate);
 
   for (var i = 0; i < results.length; i++) {
-    var film=results[i];
-    var stars=getStars(film.vote_average);
+    var element=results[i];
+    var stars=getStars(element.vote_average);
     var noStars=5-stars;
     var arrStars=getArrStars(stars);
     var arrNoStars=getArrStars(noStars);
+    var inData={};
 
-    var inData={
-      title:film.title,
-      originalTitle:film.original_title,
-      language:getLanguage(film.original_language),
-      stars:arrStars,
-      noStars:arrNoStars
+    if (element.title==null) {
+      inData={
+        type:"Serie TV",
+        title:element.name,
+        originalTitle:element.original_name,
+        flag:getLanguageFlag(element.original_language),
+        stars:arrStars,
+        noStars:arrNoStars
+      }
+    } else {
+      inData={
+        type:"Film",
+        title:element.title,
+        originalTitle:element.original_title,
+        flag:getLanguageFlag(element.original_language),
+        stars:arrStars,
+        noStars:arrNoStars
+      }
     }
 
     var filmInfo= compiled(inData);
@@ -61,38 +93,49 @@ function getStars(rating) {
   return stars;
 }
 
-function getLanguage(myLanguage){
-  var language;
+function getLanguageFlag(myLanguage){
+  var languageFlagUrl;
 
   switch (myLanguage) {
     case "it":
-    language="Italiano"
+    languageFlagUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Flag_of_Italy.svg/2000px-Flag_of_Italy.svg.png"
+    break;
+    case "nl":
+    languageFlagUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Flag_of_the_Netherlands.svg/2000px-Flag_of_the_Netherlands.svg.png"
+    break;
+    case "es":
+    languageFlagUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Flag_of_Spain.svg/2000px-Flag_of_Spain.svg.png"
     break;
     case "fr":
-    language="Francese"
+    languageFlagUrl="http://www.unife.it/studenti/dottorato/it/immagini/bandiera-francese/image_preview"
     break;
     case "en":
-    language="Inglese"
+    languageFlagUrl="http://www.unife.it/studenti/internazionale/elementicomuni/bandiera-inglese/image"
     break;
     case "el":
-    language="Greco"
+    languageFlagUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Greece.svg/2000px-Flag_of_Greece.svg.png"
     break;
     default:
-    language="Inglese"
+    languageFlagUrl="https://vignette.wikia.nocookie.net/lyricwiki/images/0/06/Flag_-_Unknown.png/revision/latest?cb=20100902075059"
   }
 
-  return language;
+  return languageFlagUrl;
 }
 
 function init(){
   var searchInput=$("#search-input");
   var magnifier=$("#magnifier");
+  var infoWrapper=$(".info-wrapper");
+  var moviesUrl="https://api.themoviedb.org/3/search/movie?api_key=e99307154c6dfb0b4750f6603256716d";
+  var seriesUrl="https://api.themoviedb.org/3/search/tv?api_key=e99307154c6dfb0b4750f6603256716d";
 
   searchInput.on('keydown', function(e) {
     var myQuery=searchInput.val();
     if (e.which == 13) {
       if (myQuery.length>0) {
-        searchFilm(myQuery);
+        infoWrapper.html("");
+        searchQuery(myQuery,moviesUrl);
+        searchQuery(myQuery,seriesUrl);
       } else {
         alert("Immettere un parametro di ricerca!");
       }
@@ -102,7 +145,9 @@ function init(){
   magnifier.click(function functionName() {
     var myQuery=searchInput.val();
     if (myQuery.length>0) {
-      searchFilm(myQuery);
+      infoWrapper.html("");
+      searchQuery(myQuery,moviesUrl);
+      searchQuery(myQuery,seriesUrl);
     } else {
       alert("Immettere un parametro di ricerca!");
     }
