@@ -1,12 +1,24 @@
-function searchQuery(myQuery,url) {
+function searchQuery(myQuery,type) {
+  var filmWrapper=$(".film-wrapper");
+  var seriesWrapper=$(".series-wrapper");
+  var noElementsMessage=document.createElement("h1");
+  $(noElementsMessage).addClass("noElementsMessage")
+  .text("Non sono stati trovati elementi nella categoria");
+
   $.ajax({
-    url:url,
+    url:"https://api.themoviedb.org/3/search/" + type,
     method:"GET",
-    data:{query:myQuery,language:"it-IT"},
+    data:{api_key:"e99307154c6dfb0b4750f6603256716d",query:myQuery,language:"it-IT"},
     success:function(data,state){
       if (data.results.length>0) {
         var results=data.results;
-        populateUI(results);
+        populateUI(results,type);
+      } else {
+        if (type=="tv") {
+          filmWrapper.append(noElementsMessage);
+        } else {
+          seriesWrapper.append(noElementsMessage);
+        }
       }
     },
     error:function(request,state,error){
@@ -17,8 +29,9 @@ function searchQuery(myQuery,url) {
   });
 }
 
-function populateUI(results) {
-  var infoWrapper=$(".info-wrapper");
+function populateUI(results,type) {
+  var filmWrapper=$(".film-wrapper");
+  var seriesWrapper=$(".series-wrapper");
   var filmInfoTemplate=$("#film-info-template").html();
   var compiled=Handlebars.compile(filmInfoTemplate);
 
@@ -63,7 +76,12 @@ function populateUI(results) {
     }
 
     var filmInfo= compiled(inData);
-    infoWrapper.append(filmInfo);
+
+    if (type=="movie") {
+      filmWrapper.append(filmInfo);
+    } else {
+      seriesWrapper.append(filmInfo);
+    }
   }
 }
 
@@ -78,9 +96,7 @@ function getArrStars(stars) {
 }
 
 function getStars(rating) {
-  var stars=Math.ceil(rating);
-  stars=stars/2;
-  stars=Math.ceil(stars);
+  var stars=Math.ceil(rating/2);
   return stars;
 }
 
@@ -116,17 +132,20 @@ function getLanguageFlag(myLanguage){
 function init(){
   var searchInput=$("#search-input");
   var magnifier=$("#magnifier");
-  var infoWrapper=$(".info-wrapper");
-  var moviesUrl="https://api.themoviedb.org/3/search/movie?api_key=e99307154c6dfb0b4750f6603256716d";
-  var seriesUrl="https://api.themoviedb.org/3/search/tv?api_key=e99307154c6dfb0b4750f6603256716d";
+  var filmWrapper=$(".film-wrapper");
+  var seriesWrapper=$(".series-wrapper");
 
   searchInput.on('keydown', function(e) {
     var myQuery=searchInput.val();
     if (e.which == 13) {
       if (myQuery.length>0) {
-        infoWrapper.html("");
-        searchQuery(myQuery,moviesUrl);
-        searchQuery(myQuery,seriesUrl);
+        //Partono hiddati solo perché per ora non ci sono delle schede film all'inizio.
+        $("#film-title").show();
+        $("#series-title").show();
+        filmWrapper.html("");
+        seriesWrapper.html("");
+        searchQuery(myQuery,"movie");
+        searchQuery(myQuery,"tv");
       } else {
         alert("Immettere un parametro di ricerca!");
       }
@@ -136,15 +155,19 @@ function init(){
   magnifier.click(function functionName() {
     var myQuery=searchInput.val();
     if (myQuery.length>0) {
-      infoWrapper.html("");
-      searchQuery(myQuery,moviesUrl);
-      searchQuery(myQuery,seriesUrl);
+      //Partono hiddati solo perché per ora non ci sono delle schede film all'inizio.
+      $("#film-title").show();
+      $("#series-title").show();
+      filmWrapper.html("");
+      seriesWrapper.html("");
+      searchQuery(myQuery,"movie");
+      searchQuery(myQuery,"tv");
     } else {
       alert("Immettere un parametro di ricerca!");
     }
   });
 
-  var filmInfo=".info-wrapper > .film-info";
+  var filmInfo=".info-wrapper .film-info";
   $(document).on("click", filmInfo, function( e ) {
     var me=$(this);
     var itemId=me.data("id");

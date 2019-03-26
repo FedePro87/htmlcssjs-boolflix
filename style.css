@@ -30,9 +30,14 @@ body{
   width: 200px;
 }
 
-.info-wrapper{
+.film-wrapper,.series-wrapper{
   display: flex;
   flex-wrap: wrap;
+}
+
+.noElementsMessage{
+  color: white;
+  padding: 5px;
 }
 
 .film-info{
@@ -125,4 +130,10 @@ transform: scale(1.1);
 #poster_img{
   max-width:100%;
   height: 100%;
+}
+
+#film-title,#series-title{
+  display: none;
+  padding: 5px;
+  color: white;
 }
