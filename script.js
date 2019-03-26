@@ -129,9 +129,8 @@ function getLanguageFlag(myLanguage){
   return languageFlagUrl;
 }
 
-function init(){
+function initEnterSearch() {
   var searchInput=$("#search-input");
-  var magnifier=$("#magnifier");
   var filmWrapper=$(".film-wrapper");
   var seriesWrapper=$(".series-wrapper");
 
@@ -151,6 +150,12 @@ function init(){
       }
     }
   });
+}
+
+function initMagnifierSearch() {
+  var magnifier=$("#magnifier");
+  var filmWrapper=$(".film-wrapper");
+  var seriesWrapper=$(".series-wrapper");
 
   magnifier.click(function functionName() {
     var myQuery=searchInput.val();
@@ -166,13 +171,21 @@ function init(){
       alert("Immettere un parametro di ricerca!");
     }
   });
+}
 
+function initOpenFilmPage() {
   var filmInfo=".info-wrapper .film-info";
-  $(document).on("click", filmInfo, function( e ) {
+  $(document).on("click", filmInfo, function(e) {
     var me=$(this);
     var itemId=me.data("id");
     window.open("https://www.themoviedb.org/" + itemId + "?language=it-IT",'_blank');
-  } );
+  });
+}
+
+function init(){
+  initEnterSearch();
+  initMagnifierSearch();
+  initOpenFilmPage();
 }
 
 $(document).ready(init);
