@@ -24,10 +24,10 @@
         </div>
         <div class="overlay"></div>
         <div class="overlay-wrapper">
-          <p>Titolo: "<span class="title">{{title}}</span>"</p>
+          <p>Titolo: "<span>{{title}}</span>"</p>
           <p>Titolo originale: "<span class="original-title">{{originalTitle}}</span>"</p>
-          <p>Lingua: <img id="flag" src={{flag}} alt=""></p>
-          <p>Categoria: "<span class="title">{{type}}</span>"</p>
+          <p>Lingua: <img class="flag" src={{flag}} alt=""></p>
+          <p>Cast: "<span class="cast">{{cast}}</span>"</p>
           <p>Valutazione media:<br>
             <span class="rating">
               {{#each stars}}
@@ -38,7 +38,7 @@
               {{/each}}
             </span>
           </p>
-          <p>Sinossi: <span class="title">{{itemOverview}}</span></p>
+          <p>Riassunto: <span>{{itemOverview}}</span></p>
         </div>
       </div>
     </div>

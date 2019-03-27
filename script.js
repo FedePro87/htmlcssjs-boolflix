@@ -55,6 +55,27 @@ function changeTitles(page,type,hasResults) {
   }
 }
 
+function getCast(action,data) {
+  var myId=action + "/" + data.id;
+  var credits=data.credits;
+  var cast= credits.cast;
+  var castArray=[];
+
+  for (var i = 0; i <5; i++) {
+    var element=cast[i];
+    if (element!=null) {
+      castArray.push(element.name);
+    }
+  }
+  updateCast(castArray,myId);
+}
+
+function updateCast(castArray,myId) {
+  var myFilm=$(".film-info[data-id='" + myId + "']");
+  var mySpan= myFilm.find(".cast");
+  mySpan.text(castArray);
+}
+
 function requestAjaxTmdb(action,type,myQuery,page) {
   var filmWrapper=$(".film-wrapper");
   var seriesWrapper=$(".series-wrapper");
@@ -65,21 +86,25 @@ function requestAjaxTmdb(action,type,myQuery,page) {
   $.ajax({
     url:"https://api.themoviedb.org/3/" + action + "/" + type,
     method:"GET",
-    data:{api_key:"e99307154c6dfb0b4750f6603256716d",query:myQuery,language:"it-IT",page:page},
+    data:{api_key:"e99307154c6dfb0b4750f6603256716d",query:myQuery,language:"it-IT",page:page,append_to_response:"credits"},
     success:function(data,state){
-      if (data.results.length>0) {
-        var results=data.results;
-        populateUI(results,type);
-        toggleSwitchers(data,type,page);
-        changeTitles(page,type,true);
-      } else {
-        if (type=="tv") {
-          seriesWrapper.append(noElementsMessage);
+      if (action=="movie"||action=="tv") {
+        getCast(action,data);
+      } else{
+        if (data.results.length>0) {
+          var results=data.results;
+          populateUI(results,type);
+          toggleSwitchers(data,type,page);
+          changeTitles(page,type,true);
         } else {
-          filmWrapper.append(noElementsMessage);
+          if (type=="tv") {
+            seriesWrapper.append(noElementsMessage);
+          } else {
+            filmWrapper.append(noElementsMessage);
+          }
+          toggleSwitchers(data,type,page);
+          changeTitles(page,type,false);
         }
-        toggleSwitchers(data,type,page);
-        changeTitles(page,type,false);
       }
     },
     error:function(request,state,error){
@@ -110,7 +135,7 @@ function populateUI(results,type) {
     if (type=="tv") {
       inData={
         itemId:"tv/" + element.id,
-        type:"Serie TV",
+        cast:requestAjaxTmdb("tv",element.id,"",1),
         title:element.name,
         originalTitle:element.original_name,
         flag:getLanguageFlag(element.original_language),
@@ -122,7 +147,7 @@ function populateUI(results,type) {
     } else {
       inData={
         itemId:"movie/" + element.id,
-        type:"Film",
+        cast:requestAjaxTmdb("movie",element.id,"",1),
         title:element.title,
         originalTitle:element.original_title,
         flag:getLanguageFlag(element.original_language),
