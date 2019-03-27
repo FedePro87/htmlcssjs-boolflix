@@ -1,4 +1,4 @@
-function searchQuery(myQuery,type) {
+function requestAjaxTmdb(action,type,myQuery) {
   var filmWrapper=$(".film-wrapper");
   var seriesWrapper=$(".series-wrapper");
   var noElementsMessage=document.createElement("h1");
@@ -6,7 +6,7 @@ function searchQuery(myQuery,type) {
   .text("Non sono stati trovati elementi nella categoria");
 
   $.ajax({
-    url:"https://api.themoviedb.org/3/search/" + type,
+    url:"https://api.themoviedb.org/3/" + action + "/" + type,
     method:"GET",
     data:{api_key:"e99307154c6dfb0b4750f6603256716d",query:myQuery,language:"it-IT"},
     success:function(data,state){
@@ -138,13 +138,10 @@ function initEnterSearch() {
     var myQuery=searchInput.val();
     if (e.which == 13) {
       if (myQuery.length>0) {
-        //Partono hiddati solo perché per ora non ci sono delle schede film all'inizio.
-        $("#film-title").show();
-        $("#series-title").show();
         filmWrapper.html("");
         seriesWrapper.html("");
-        searchQuery(myQuery,"movie");
-        searchQuery(myQuery,"tv");
+        requestAjaxTmdb("search","movie",myQuery);
+        requestAjaxTmdb("search","tv",myQuery);
       } else {
         alert("Immettere un parametro di ricerca!");
       }
@@ -161,13 +158,10 @@ function initMagnifierSearch() {
   magnifier.click(function functionName() {
     var myQuery=searchInput.val();
     if (myQuery.length>0) {
-      //Partono hiddati solo perché per ora non ci sono delle schede film all'inizio.
-      $("#film-title").show();
-      $("#series-title").show();
       filmWrapper.html("");
       seriesWrapper.html("");
-      searchQuery(myQuery,"movie");
-      searchQuery(myQuery,"tv");
+      requestAjaxTmdb("search","movie",myQuery);
+      requestAjaxTmdb("search","tv",myQuery);
     } else {
       alert("Immettere un parametro di ricerca!");
     }
@@ -183,7 +177,13 @@ function initOpenFilmPage() {
   });
 }
 
+function initStartUI() {
+  requestAjaxTmdb("discover","movie","");
+  requestAjaxTmdb("discover","tv","");
+}
+
 function init(){
+  initStartUI();
   initEnterSearch();
   initMagnifierSearch();
   initOpenFilmPage();

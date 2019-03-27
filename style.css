@@ -133,7 +133,6 @@ transform: scale(1.1);
 }
 
 #film-title,#series-title{
-  display: none;
   padding: 5px;
   color: white;
 }
