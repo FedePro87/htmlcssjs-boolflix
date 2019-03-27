@@ -76,20 +76,36 @@ function updateCast(castArray,myId) {
   mySpan.text(castArray);
 }
 
-function requestAjaxTmdb(action,type,myQuery,page) {
-  var filmWrapper=$(".film-wrapper");
-  var seriesWrapper=$(".series-wrapper");
+function getNoElementsWarning() {
   var noElementsMessage=document.createElement("h1");
   $(noElementsMessage).addClass("noElementsMessage")
   .text("Non sono stati trovati elementi nella categoria");
+  return noElementsMessage;
+}
+
+function requestAjaxTmdb(action,type,myQuery,page) {
+  var filmWrapper=$(".film-wrapper");
+  var seriesWrapper=$(".series-wrapper");
+  var myUrl;
+  var myPage;
+
+  if (action=="genre") {
+    myUrl="https://api.themoviedb.org/3/" + action + "/" + type + "/list";
+    myPage=1;
+  } else {
+    myUrl="https://api.themoviedb.org/3/" + action + "/" + type;
+    myPage=page;
+  }
 
   $.ajax({
-    url:"https://api.themoviedb.org/3/" + action + "/" + type,
+    url:myUrl,
     method:"GET",
-    data:{api_key:"e99307154c6dfb0b4750f6603256716d",query:myQuery,language:"it-IT",page:page,append_to_response:"credits"},
+    data:{api_key:"e99307154c6dfb0b4750f6603256716d",query:myQuery,language:"it-IT",page:myPage,append_to_response:"credits"},
     success:function(data,state){
       if (action=="movie"||action=="tv") {
         getCast(action,data);
+      } else if (action=="genre") {
+        getGenres(data.genres,myQuery,page,type);
       } else{
         if (data.results.length>0) {
           var results=data.results;
@@ -98,9 +114,9 @@ function requestAjaxTmdb(action,type,myQuery,page) {
           changeTitles(page,type,true);
         } else {
           if (type=="tv") {
-            seriesWrapper.append(noElementsMessage);
+            seriesWrapper.append(getNoElementsWarning());
           } else {
-            filmWrapper.append(noElementsMessage);
+            filmWrapper.append(getNoElementsWarning());
           }
           toggleSwitchers(data,type,page);
           changeTitles(page,type,false);
@@ -113,6 +129,26 @@ function requestAjaxTmdb(action,type,myQuery,page) {
       console.log(error);
     }
   });
+}
+
+function getGenres(genres,elementGenres,myId,type) {
+  var myGenres=[];
+  var id=type+"/"+myId;
+  for (var i = 0; i < elementGenres.length; i++) {
+    var element=elementGenres[i];
+    for (var z = 0; z < genres.length; z++) {
+      if (element==genres[z].id) {
+        myGenres.push(genres[z].name);
+      }
+    }
+  }
+  updateGenres(myGenres,id);
+}
+
+function updateGenres(myGenres,myId) {
+  var myFilm=$(".film-info[data-id='" + myId + "']");
+  var mySpan= myFilm.find(".genres");
+  mySpan.text(myGenres);
 }
 
 function populateUI(results,type) {
@@ -139,6 +175,7 @@ function populateUI(results,type) {
         title:element.name,
         originalTitle:element.original_name,
         flag:getLanguageFlag(element.original_language),
+        genres:requestAjaxTmdb("genre","tv",element.genre_ids,element.id),
         stars:getArrStars(stars),
         noStars:getArrStars(5-stars),
         posterPathUrl:elementPathUrl,
@@ -151,6 +188,7 @@ function populateUI(results,type) {
         title:element.title,
         originalTitle:element.original_title,
         flag:getLanguageFlag(element.original_language),
+        genres:requestAjaxTmdb("genre","movie",element.genre_ids,element.id),
         stars:getArrStars(stars),
         noStars:getArrStars(5-stars),
         posterPathUrl:elementPathUrl,
