@@ -153,6 +153,7 @@ function initEnterSearch() {
 }
 
 function initMagnifierSearch() {
+  var searchInput=$("#search-input");
   var magnifier=$("#magnifier");
   var filmWrapper=$(".film-wrapper");
   var seriesWrapper=$(".series-wrapper");
