@@ -34,7 +34,7 @@ function toggleSwitchers(data,type,page) {
 function changeTitles(page,type,hasResults) {
   var filmTitle=$("#film-title");
   var seriesTitle=$("#series-title");
-//Se ci sono risultati...
+  //Se ci sono risultati...
   if (hasResults) {
     //Se è un film...
     if (type=="tv") {
@@ -102,16 +102,16 @@ function requestAjaxTmdb(action,type,myQuery,page) {
   var seriesWrapper=$(".series-wrapper");
   var myUrl;
   var myPage;
-//Qui arrivo nel caso in cui passerò come action "genre".Ciò avviene quando mi vado a recuperare tutti i generi dal database.
-//In quel caso, cambio la url perchè è diversa perché aggiunge anche "/list".
-//Paradossalmente non ottengo errori pur passando ulteriori argomenti più avanti nell'oggetto data.
-//A questo punto page non sarà il numero di pagina (ovviamente, dato che stiamo facendo una ricerca di generi), quindi otterrei un errore se gli passassi l'id del film che mi interessa.
-//Per ovviare al problema, lascio page inalterato per utilizzarlo così come lo avevo pensato e cambio solo il valore di myPage, che nel caso delle ricerche e della pagina iniziale sarà quello normale. Nel caso in cui sto cercando la lista di generi, gli passo un numero qualsiasi che non mi dia errore(in questo caso 1).
+  //Qui arrivo nel caso in cui passerò come action "genre".Ciò avviene quando mi vado a recuperare tutti i generi dal database.
+  //In quel caso, cambio la url perchè è diversa perché aggiunge anche "/list".
+  //Paradossalmente non ottengo errori pur passando ulteriori argomenti più avanti nell'oggetto data.
+  //A questo punto page non sarà il numero di pagina (ovviamente, dato che stiamo facendo una ricerca di generi), quindi otterrei un errore se gli passassi l'id del film che mi interessa.
+  //Per ovviare al problema, lascio page inalterato per utilizzarlo così come lo avevo pensato e cambio solo il valore di myPage, che nel caso delle ricerche e della pagina iniziale sarà quello normale. Nel caso in cui sto cercando la lista di generi, gli passo un numero qualsiasi che non mi dia errore(in questo caso 1).
   if (action=="genre") {
     myUrl="https://api.themoviedb.org/3/" + action + "/" + type + "/list";
     myPage=1;
   }
-//Qui si arriva sia se sono alla prima pagina che se sono nella ricerca o sto navigando tra le pagine.
+  //Qui si arriva sia se sono alla prima pagina che se sono nella ricerca o sto navigando tra le pagine.
   else {
     myUrl="https://api.themoviedb.org/3/" + action + "/" + type;
     myPage=page;
@@ -129,7 +129,7 @@ function requestAjaxTmdb(action,type,myQuery,page) {
       }
       //Qui arriverò quando mi serviranno i generi.
       else if (action=="genre") {
-        getGenres(data.genres,myQuery,page,type);
+        getGenresName(data.genres,myQuery,page,type);
       }
       //Qui arriverò dalla pagina iniziale, dalla ricerca o dal cambio di pagina.
       else{
@@ -157,22 +157,28 @@ function requestAjaxTmdb(action,type,myQuery,page) {
     }
   });
 }
+//Genera un array con i generi del film, che poi verrà confrontato con tutti i generi per ottenere il nome vero.
+function getElementGenresArray(elementGenres) {
+  var splittedGenres=elementGenres.split(",");
+  return splittedGenres;
+}
 //Funzione che confronta l'array di generi che mi viene dal database all'array di generi del singolo film.
 //Considerando che sono di meno quelli dei singolo elemento, faccio prima a confrontare un singolo genere con tutti i generi.
 //Se lo trovo, aggiungo il vero nome del genere alla mia lista. Infine la passo alla funzione che si occuperà di scrivere i risultati sulla pagina.
-function getGenres(genres,elementGenres,myId,type) {
-  var myGenres=[];
+function getGenresName(genres,elementGenres,myId,type) {
+  var myGenresName=[];
   var id=type+"/"+myId;
+  elementGenres=getElementGenresArray(elementGenres);
   for (var i = 0; i < elementGenres.length; i++) {
     var element=elementGenres[i];
     for (var z = 0; z < genres.length; z++) {
       if (element==genres[z].id) {
-        myGenres.push(genres[z].name);
+        myGenresName.push(genres[z].name);
         break;
       }
     }
   }
-  updateGenres(myGenres,id);
+  updateGenres(myGenresName,id);
 }
 //Funzione identica a quella del cast, solo che aggiunge i generi.
 function updateGenres(myGenres,myId) {
@@ -202,19 +208,11 @@ function populateUI(results,type) {
       inData={
         //Una parte importantissima, perché imposto il data-id così da potermi recuperare lo specifico film più tardi.
         itemId:"tv/" + element.id,
-        //Qui andrò a chiamare sempre la solita megafunzione.
-        //L'action "tv" oppure "movie" mi collegherà poi ai metodi per aggiungere i cast ai film.
-        //Come type invece gli passo l'id del singolo film.
-        cast:requestAjaxTmdb("tv",element.id,"",1),
+        itemGenres:element.genre_ids,
         title:element.name,
         originalTitle:element.original_name,
         //Recupero la lingua originale e lo passo alla funzione che si occuperà di assegnarmi una src dell'immagine in base al paese.
         flag:getLanguageFlag(element.original_language),
-        //Qui mi andrò prima a recuperare tutti i generi per poi passarmi tutto ciò che mi serve per aggiungerli alla pagina.
-        //Action "genre" farà in modo di avere l'url del database giusta, oltre che alla pagina per evitare un bug.
-        //Gli passo gli id dei generi attraverso query, che mi serviranno più avanti per la comparazione.
-        //Infine come page gli passo il suo id, che mi servirà sempre allo stesso modo.
-        genres:requestAjaxTmdb("genre","tv",element.genre_ids,element.id),
         //Qui utilizzo Handlebars con il suo foreach. Per ogni elemento dell'array stampa una stella.
         //Gli elementi dell'array sono spazi vuoti perché così non scrive altro oltre la stella.
         stars:getArrStars(stars),
@@ -225,11 +223,10 @@ function populateUI(results,type) {
     } else {
       inData={
         itemId:"movie/" + element.id,
-        cast:requestAjaxTmdb("movie",element.id,"",1),
+        itemGenres:element.genre_ids,
         title:element.title,
         originalTitle:element.original_title,
         flag:getLanguageFlag(element.original_language),
-        genres:requestAjaxTmdb("genre","movie",element.genre_ids,element.id),
         stars:getArrStars(stars),
         noStars:getArrStars(5-stars),
         posterPathUrl:elementPathUrl,
@@ -342,6 +339,34 @@ function initOpenFilmPage() {
     window.open("https://www.themoviedb.org/" + itemId + "?language=it-IT",'_blank');
   });
 }
+
+function initFilmInfoHover() {
+  var filmInfo=".info-wrapper .film-info";
+  var showed=false;
+  $(document).on("mouseenter", filmInfo, function() {
+    var me = $(this);
+    var elementId=me.data("id");
+    var elementGenres=me.data("genres");
+    var elementType;
+    var elementId;
+    if (!showed) {
+      showed=true;
+      var splittedId=elementId.split("/");
+      elementType=splittedId[0];
+      elementId=splittedId[1];
+    }
+    //Qui andrò a chiamare sempre la solita megafunzione.
+    //L'action "tv" oppure "movie" mi collegherà poi ai metodi per aggiungere i cast ai film.
+    requestAjaxTmdb(elementType,elementId,"",1);
+    //Qui mi andrò prima a recuperare tutti i generi per poi passarmi tutto ciò che mi serve per aggiungerli alla pagina.
+    //Action "genre" farà in modo di avere l'url del database giusta, oltre che alla pagina per evitare un bug.
+    requestAjaxTmdb("genre",elementType,elementGenres,elementId);
+  });
+
+  $(document).on("mouseleave", filmInfo, function() {
+    showed=false;
+  });
+}
 //All'inizio mi ritroverò qui.
 function initStartUI() {
   requestAjaxTmdb("discover","movie","",filmPage);
@@ -405,9 +430,8 @@ function initBoolflixClick() {
   var boolflixImg=$(".header-wrapper>img");
 
   boolflixImg.click(function(){
-  window.location.reload(true);
+    window.location.reload(true);
   });
-
 }
 
 function init(){
@@ -416,6 +440,7 @@ function init(){
   initSwitchPages();
   initSearch();
   initOpenFilmPage();
+  initFilmInfoHover();
 }
 
 $(document).ready(init);
