@@ -342,25 +342,24 @@ function initOpenFilmPage() {
 
 function initFilmInfoHover() {
   var filmInfo=".info-wrapper .film-info";
-  var showed=false;
   $(document).on("mouseenter", filmInfo, function() {
     var me = $(this);
     var elementId=me.data("id");
     var elementGenres=me.data("genres");
     var elementType;
     var elementId;
-    if (!showed) {
-      showed=true;
+    if (!me.hasClass("cached")) {
+      me.addClass("cached");
       var splittedId=elementId.split("/");
       elementType=splittedId[0];
       elementId=splittedId[1];
+      //Qui andrò a chiamare sempre la solita megafunzione.
+      //L'action "tv" oppure "movie" mi collegherà poi ai metodi per aggiungere i cast ai film.
+      requestAjaxTmdb(elementType,elementId,"",1);
+      //Qui mi andrò prima a recuperare tutti i generi per poi passarmi tutto ciò che mi serve per aggiungerli alla pagina.
+      //Action "genre" farà in modo di avere l'url del database giusta, oltre che alla pagina per evitare un bug.
+      requestAjaxTmdb("genre",elementType,elementGenres,elementId);
     }
-    //Qui andrò a chiamare sempre la solita megafunzione.
-    //L'action "tv" oppure "movie" mi collegherà poi ai metodi per aggiungere i cast ai film.
-    requestAjaxTmdb(elementType,elementId,"",1);
-    //Qui mi andrò prima a recuperare tutti i generi per poi passarmi tutto ciò che mi serve per aggiungerli alla pagina.
-    //Action "genre" farà in modo di avere l'url del database giusta, oltre che alla pagina per evitare un bug.
-    requestAjaxTmdb("genre",elementType,elementGenres,elementId);
   });
 
   $(document).on("mouseleave", filmInfo, function() {
