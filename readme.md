@@ -20,4 +20,4 @@ Le informazioni contenute nella pagina sono recuperate attraverso l'API https://
 
 ## Animated Screenshot
 #### Video sul funzionamento
-<img src="screenshots/search.gif" alt="Search" width="640"/>
+<img src="gif/boolgiphy.gif" alt="Search" width="640"/>
