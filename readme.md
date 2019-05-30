@@ -1,6 +1,6 @@
 [Il progetto](#boolflix)<br>
 [Disclaimer](#disclaimer)<br>
-[Screenshots](#animated-screenshot)<br>
+[Video](#video-sul-funzionamento)<br>
 
 # Boolflix
 Boolflix è una replica di Netflix realizzata in HTML, CSS e JS. Utilizza l'API https://www.themoviedb.org/documentation/api per recuperare le informazioni attraverso delle chiamate AJAX.
@@ -18,8 +18,7 @@ HTML,CSS,JS,AJAX,Jquery,API https://www.themoviedb.org/documentation/api.
 #### Disclaimer
 Le informazioni contenute nella pagina sono recuperate attraverso l'API https://www.themoviedb.org/documentation/api
 
-## Animated Screenshot
 #### Video sul funzionamento
 <video width="320" height="240" controls>
-  <source src="boolflix.mp4" type="video/mp4">
+  <source src="video/boolflix.mp4" type="video/mp4">
 </video>
